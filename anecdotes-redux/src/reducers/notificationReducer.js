@@ -11,16 +11,26 @@ const notificationReducer = (state = initialState, action) => {
   }
 }
 
+let timerId = null
+
 export const showNotification = (message, duration) => {
   return async dispatch => {
+    if (timerId) {
+      clearTimeout(timerId)
+      timerId = null
+    }
+
     dispatch({
       type: 'SHOW_NOTIFICATION',
       data: message
     })
-    await new Promise(r => setTimeout(r, duration * 1000))
-    dispatch({
-      type: 'HIDE_NOTIFICATION'
-    })
+
+    timerId = setTimeout(() => {
+      timerId = null
+      dispatch({
+        type: 'HIDE_NOTIFICATION'
+      })
+    }, duration * 1000)
   }
 }
 
